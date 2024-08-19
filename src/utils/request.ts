@@ -1,7 +1,11 @@
-import axios, { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, {AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import {ElMessage} from "element-plus";
+import router from "@/router";
 
 const service: AxiosInstance = axios.create({
-    timeout: 5000
+    baseURL: 'http://localhost:8080',
+    timeout: 10000,
+    headers: {'Authorization': localStorage.getItem("authorization")}
 });
 
 service.interceptors.request.use(
@@ -16,9 +20,16 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     (response: AxiosResponse) => {
-        if (response.status === 200) {
+        if (response.data.code === 401) {
+            ElMessage.error(response.data.msg);
+            router.push('/login');
+            return;
+        }
+
+        if (response.data.code === 200) {
             return response;
         } else {
+            ElMessage.error(response.data.msg);
             Promise.reject();
         }
     },

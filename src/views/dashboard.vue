@@ -4,10 +4,10 @@
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg1">
-                        <User />
+                        <User/>
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color1" :end="6666" />
+                        <countup class="card-num color1" :end="6666"/>
                         <div>用户访问量</div>
                     </div>
                 </el-card>
@@ -15,10 +15,10 @@
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg2">
-                        <ChatDotRound />
+                        <ChatDotRound/>
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color2" :end="168" />
+                        <countup class="card-num color2" :end="168"/>
                         <div>系统消息</div>
                     </div>
                 </el-card>
@@ -26,10 +26,10 @@
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg3">
-                        <Goods />
+                        <Goods/>
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color3" :end="8888" />
+                        <countup class="card-num color3" :end="8888"/>
                         <div>商品数量</div>
                     </div>
                 </el-card>
@@ -37,10 +37,10 @@
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg4">
-                        <ShoppingCartFull />
+                        <ShoppingCartFull/>
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color4" :end="568" />
+                        <countup class="card-num color4" :end="568"/>
                         <div>今日订单量</div>
                     </div>
                 </el-card>
@@ -54,7 +54,7 @@
                         <p class="card-header-title">订单动态</p>
                         <p class="card-header-desc">最近一周订单状态，包括订单成交量和订单退货量</p>
                     </div>
-                    <v-chart class="chart" :option="dashOpt1" />
+                    <v-chart class="chart" :option="dashOpt1"/>
                 </el-card>
             </el-col>
             <el-col :span="6">
@@ -63,7 +63,7 @@
                         <p class="card-header-title">品类分布</p>
                         <p class="card-header-desc">最近一个月销售商品的品类情况</p>
                     </div>
-                    <v-chart class="chart" :option="dashOpt2" />
+                    <v-chart class="chart" :option="dashOpt2"/>
                 </el-card>
             </el-col>
         </el-row>
@@ -93,7 +93,7 @@
                         <p class="card-header-title">渠道统计</p>
                         <p class="card-header-desc">最近一个月的订单来源统计</p>
                     </div>
-                    <v-chart class="map-chart" :option="mapOptions" />
+                    <v-chart class="map-chart" :option="mapOptions"/>
                 </el-card>
             </el-col>
             <el-col :span="7">
@@ -111,11 +111,11 @@
                                     <div class="rank-item-desc">销量：{{ rank.value }}</div>
                                 </div>
                                 <el-progress
-                                    :show-text="false"
-                                    striped
-                                    :stroke-width="10"
-                                    :percentage="rank.percent"
-                                    :color="rank.color"
+                                        :show-text="false"
+                                        striped
+                                        :stroke-width="10"
+                                        :percentage="rank.percent"
+                                        :color="rank.color"
                                 />
                             </div>
                         </div>
@@ -127,9 +127,8 @@
 </template>
 
 <script setup lang="ts" name="dashboard">
-import countup from '@/components/countup.vue';
-import { use, registerMap } from 'echarts/core';
-import { BarChart, LineChart, PieChart, MapChart } from 'echarts/charts';
+import {use, registerMap} from 'echarts/core';
+import {BarChart, LineChart, PieChart, MapChart} from 'echarts/charts';
 import {
     GridComponent,
     TooltipComponent,
@@ -137,10 +136,13 @@ import {
     TitleComponent,
     VisualMapComponent,
 } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
+import {CanvasRenderer} from 'echarts/renderers';
 import VChart from 'vue-echarts';
-import { dashOpt1, dashOpt2, mapOptions } from './chart/options';
+import {dashOpt1, dashOpt2, mapOptions} from './chart/options';
 import chinaMap from '@/utils/china';
+import {onMounted} from "vue";
+import {getUserInfo} from "@/api/user";
+
 use([
     CanvasRenderer,
     BarChart,
@@ -154,6 +156,16 @@ use([
     MapChart,
 ]);
 registerMap('china', chinaMap);
+
+//加载用户信息
+onMounted(() => {
+    getUserInfo().then(rsp => {
+        if (rsp.data.code == 200) {
+            localStorage.setItem('vuems_name', rsp.data.data.username);
+        }
+    })
+})
+
 const activities = [
     {
         content: '收藏商品',
@@ -350,6 +362,7 @@ const ranks = [
     font-size: 14px;
     color: #999;
 }
+
 .map-chart {
     width: 100%;
     height: 350px;
